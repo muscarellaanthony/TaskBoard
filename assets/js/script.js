@@ -2,6 +2,64 @@
 let taskList = JSON.parse(localStorage.getItem("tasks"));
 let nextId = JSON.parse(localStorage.getItem("nextId"));
 
+function formSubmit(){
+    const taskArray = []
+
+    const taskObject = {
+        objectTitle: title.value,
+        objectDate: date.value,
+        objectDescription: description.value.trim()
+    }
+
+    taskArray.push(taskObject)
+    localStorage.setItem('tasks', JSON.stringify(taskArray))
+    console.log(taskArray)
+
+}
+
+
+function generateCard(){
+    
+}
+
+
+
+
+const title = document.getElementById('inputTitle')
+const date = document.getElementById('inputDate')
+const description = document.getElementById('inputDescription')
+const formButton = document.getElementById('formButton')
+formButton.addEventListener('click', formSubmit)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Todo: create a function to generate a unique task id
 function generateTaskId() {
 
