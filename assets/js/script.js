@@ -3,7 +3,7 @@ let taskList = JSON.parse(localStorage.getItem("tasks"));
 let nextId = JSON.parse(localStorage.getItem("nextId"));
 
 function formSubmit(){
-    const taskArray = []
+    const taskArray = JSON.parse(localStorage.getItem('strings')) || [];
 
     const taskObject = {
         objectTitle: title.value,
@@ -19,7 +19,7 @@ function formSubmit(){
 
 
 function generateCard(){
-    
+
 }
 
 
