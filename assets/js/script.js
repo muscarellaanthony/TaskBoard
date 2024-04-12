@@ -1,44 +1,48 @@
 // Retrieve tasks and nextId from localStorage
-let taskList = JSON.parse(localStorage.getItem("tasks"));
+
 let nextId = JSON.parse(localStorage.getItem("nextId"));
 
+function generateTaskId(){
+    if(nextId === null){
+        nextId = 1;
+    }else {
+        nextId++;
+    }
+    localStorage.setItem('nextId', JSON.stringify(nextId))
+    return nextId;
+
+}
 
 function formSubmit(){
-    const taskArray = JSON.parse(localStorage.getItem('strings')) || [];
+    const taskArray = JSON.parse(localStorage.getItem('tasks')) || [];
+    let taskLength = taskArray.length
+    console.log(taskLength)
 
     const taskObject = {
-        //add generate task id function
+        objectId: generateTaskId(),
         objectTitle: title.value,
         objectDate: date.value,
         objectDescription: description.value.trim()
     }
 
     taskArray.push(taskObject)
+    createTaskCard(taskObject)
     localStorage.setItem('tasks', JSON.stringify(taskArray))
     console.log(taskArray)
 
-    let taskCard = createTaskCard(taskObject)
-    // taskCard.setAttribute('draggable','true')
-    // taskCard.setAttribute('ondragstart','drag(event)')
-    $('#todo-cards').append(taskCard);
-    $('.draggable').draggable({
-        opacity: .7,
-        zIndex: 1000,
-    })
+    
 }
-
 
 // Todo: create a function to create a task card
 function createTaskCard(task) {
     console.log(task)
+    console.log('task^')
     const taskCard = document.createElement('div')
     taskCard.style.zIndex=1000;
     taskCard.classList.add('card', 'project-card', 'draggable', 'my-3')
-    //   .attr('data-project-id', task.id);
 
     const cardHeader = document.createElement('div')
     cardHeader.classList.add('card-header', 'h4')
-    console.log(task.objectTitle)
     const headerText = document.createTextNode(task.objectTitle);
     cardHeader.appendChild(headerText)
 
@@ -59,34 +63,38 @@ function createTaskCard(task) {
       cardDeleteBtn.classList.add('btn', 'btn-danger', 'delete')
       const buttonText = document.createTextNode('Delete')
       cardDeleteBtn.appendChild(buttonText)
-    // cardDeleteBtn.on('click', handleDeleteTask);
+      cardDeleteBtn.setAttribute('id', task.objectId)
+    //   cardDeleteBtn.setAttribute('id', 'deleteBtn')
 
-    //   ? Sets the card background color based on due date. Only apply the styles if the dueDate exists and the status is not done.
-//   if (task.objectDate && project.status !== 'done') {
-    const now = dayjs();
-    const taskDueDate = dayjs(task.objectDate, 'DD/MM/YYYY');
+      
 
-    // ? If the task is due today, make the card yellow. If it is overdue, make it red.
-    // if (now.isSame(task.objectDate, 'day')) {
-    //   taskCard.addClass('bg-warning text-white');
-    // } else if (now.isAfter(task.objectDate)) {
-    //   taskCard.addClass('bg-danger text-white');
-    //   cardDeleteBtn.addClass('border-light');
-    // }
-
-
-  // ? Gather all the elements created above and append them to the correct elements.
   cardBody.append(cardDescription, cardDueDate, cardDeleteBtn);
   taskCard.append(cardHeader, cardBody);
 
-  // ? Return the card so it can be appended to the correct lane.
-  console.log('made it')
-  
+  const now = dayjs();
+  const taskDueDate = dayjs(task.objectDate, 'DD/MM/YYYY');
 
+    // ? If the task is due today, make the card yellow. If it is overdue, make it red.
+    if (now.isSame(taskDueDate, 'day')) {
+      taskCard.classList.add('bg-warning', 'text-white');
+    } else if (now.isAfter(taskDueDate)) {
+      taskCard.classList.add('bg-danger', 'text-white');
+      cardDeleteBtn.classList.add('border-light');
+    }
+
+  $('#todo-cards').append(taskCard);
+  $('.draggable').draggable({
+        opacity: .7,
+        zIndex: 1000,
+    })
+  
   return taskCard;
 }
 
-    
+function pageLoad(taskArray){
+    taskArray.forEach(createTaskCard)
+    }
+
 
   $( ".lane" ).droppable({
     accept: ".draggable",
@@ -101,7 +109,21 @@ function createTaskCard(task) {
     }
 });
   
- 
+function deleteCard(){
+    id = this.getAttribute('id')
+    console.log(id)
+    const deleteObjectArray = JSON.parse(localStorage.getItem('tasks'))
+    const arrayLength = deleteObjectArray.length 
+    for(let i=1; i<arrayLength; i++){
+        if (i = id){
+            deleteObjectArray.splice(i-1, 1)
+            console.log(deleteObjectArray)
+        }
+        else{}
+    }
+    localStorage.setItem('tasks', JSON.stringify(deleteObjectArray))
+    location.reload()
+} 
 
 
 
@@ -113,62 +135,21 @@ const description = document.getElementById('inputDescription')
 const formButton = document.getElementById('formButton')
 formButton.addEventListener('click', formSubmit)
 
+let taskList = JSON.parse(localStorage.getItem("tasks"));
+let taskLength = taskList.length;
+console.log(taskLength)
 
-// Todo: create a function to generate a unique task id
-function generateTaskId() {
-    //  nextid != null then nextid++
-    }
+pageLoad(JSON.parse(localStorage.getItem('tasks')))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Todo: create a function to render the task list and make cards draggable
-function renderTaskList() {
-
+for(let i=1; i<=taskLength; i++){
+    console.log(taskLength)
+    const deleteButton = document.getElementById(i)
+    console.log(deleteButton)
+    deleteButton.addEventListener('click', deleteCard)
 }
 
-// Todo: create a function to handle adding a new task
-function handleAddTask(event){
 
-}
 
-// Todo: create a function to handle deleting a task
-function handleDeleteTask(event){
 
-}
 
-// Todo: create a function to handle dropping a task into a new status lane
-function handleDrop(event, ui) {
 
-}
-
-// Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
-$(document).ready(function () {
-
-});
